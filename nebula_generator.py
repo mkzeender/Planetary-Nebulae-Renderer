@@ -1,3 +1,8 @@
+"""
+Model and render images of planetary nebulae.
+"""
+
+
 from PIL import Image
 import numpy as np
 from numpy import array, ndarray
@@ -315,52 +320,7 @@ class Nebula:
 
             v.save(filename=path.join(folder, current_name))
 
-class Shell(Nebula):
-    white_point = 1, 0
-    black_point = 1.49, 0
 
-    @sph_coord
-    def rho(self, r, th, phi):
-        return 1 if 1 < r < 1.5 else 1e-8
-
-
-class GaussianShell(Nebula):
-    @sph_coord
-    def rho(self, r, th, phi):
-        return exp(-10 * (r - 1)**2)
-
-class Quadrants(Nebula):
-
-    def rho(self, x, y, z):
-        return 1 if x >= 0 and y >= 0 else .7 if x < 0 and y >= 0 else .5 if x < 0 and y < 0 else .2
-
-
-class Butterfly(Nebula):
-
-    white_point = 0.3, 0.3
-    black_point = 0, 1.4
-
-    def rho(self, x, y, z):
-        return exp(-10 * abs((x**2 + y**2)**2 - abs(z)))
-
-
-class Disk(Nebula):
-
-    def rho(self, x, y, z):
-        return exp(-10 * (sqrt(x**2 + y**2) - 1)**2 - 10 * z**2)
-
-class Grapher(Nebula):
-    def __init__(self, *args, equation, falloff=1):
-        super().__init__(*args)
-
-        left, right = equation.split('=')
-        self.eqn = f'{left} - {right}'
-        self.falloff = falloff
-
-    def rho(self, x, y, z):
-        r_sph = r_spherical(x, y, z)
-        r_cyl = r_spherical(x, y)
-        return exp(-10 * self.falloff * eval(self.eqn)**2)
 
 
 if __name__ == '__main__':
